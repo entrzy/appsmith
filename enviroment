@@ -1,7 +1,7 @@
-# Odczytanie ścieżek instalacyjnych z pliku zmiennych
+# Read installation paths from the variables file
 $variables = Get-Content "C:\Path\To\variables.txt" | ConvertFrom-StringData
 
-# Konfiguracja dodatkowych opcji dla instalacji MSSQL
+# Configuration of additional options for the MSSQL installation
 $sqlInstallArgs = "/Q /IACCEPTSQLSERVERLICENSETERMS `
                    /ACTION=install `
                    /INSTANCENAME=MSSQLSERVER `
@@ -12,21 +12,22 @@ $sqlInstallArgs = "/Q /IACCEPTSQLSERVERLICENSETERMS `
                    /SQLSVCSTARTUPTYPE=Automatic `
                    /AGTSVCACCOUNT=`"NT AUTHORITY\Network Service`" `
                    /AGTSVCSTARTUPTYPE=Automatic "
-if ($variables.MSSQL_Port) {
+if ($variables.MSSKE_Port) {
     $sqlInstallArgs += "/TCPport=" + $variables.MSSQL_Port
 }
 
-# Instalacja MSSQL
-Write-Host "Rozpoczęcie instalacji MSSQL..."
+# Install MSSQL
+Write-Host "Starting MSSQL installation..."
 Start-Process -FilePath $variables.MSSQL_Path -ArgumentList $sqlInstallArgs -Wait
-Write-Host "Instalacja MSSQL zakończona."
+Write-Host "MSSQL installation completed."
 
-# Instalacja Java Azul
-Write-Host "Rozpoczęcie instalacji Java Azul..."
-Start-Process -FilePath $variables.Java_Path -ArgumentList '/s' -Wait
-Write-Host "Instalacja Java Azul zakończona."
+# Install Java Azul
+Write-Host "Starting Java Azul installation..."
+# Initiating Java installer in silent mode with no user interface and no restart
+Start-Process -FilePath $variables.Java_Path -ArgumentList '/s /norestart' -Wait
+Write-Host "Java Azul installation completed."
 
-# Instalacja Tomcat
-Write-Host "Rozpoczęcie instalacji Tomcat..."
-Start-Process -FilePath $variables.Tomcat_Path -ArgumentList '/S' -Wait
-Write-Host "Instalacja Tomcat zakończona."
+# Install Tomcat
+Write-Host "Starting Tomcat installation..."
+Start-Process -FilePath $variables.Tomcat_Path -ArgumentList '/S /norestart' -Wait
+Write-Host "Tomcat installation completed."
