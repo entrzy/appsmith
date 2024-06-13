@@ -1,0 +1,32 @@
+# Odczytanie ścieżek instalacyjnych z pliku zmiennych
+$variables = Get-Content "C:\Path\To\variables.txt" | ConvertFrom-StringData
+
+# Konfiguracja dodatkowych opcji dla instalacji MSSQL
+$sqlInstallArgs = "/Q /IACCEPTSQLSERVERLICENSETERMS `
+                   /ACTION=install `
+                   /INSTANCENAME=MSSQLSERVER `
+                   /FEATURES=SQLENGINE `
+                   /TCPENABLED=1 `
+                   /SQLSVCACCOUNT=`"NT AUTHORITY\SYSTEM`" `
+                   /SQLSYSADMINACCOUNTS=`"Administrator`" `
+                   /SQLSVCSTARTUPTYPE=Automatic `
+                   /AGTSVCACCOUNT=`"NT AUTHORITY\Network Service`" `
+                   /AGTSVCSTARTUPTYPE=Automatic "
+if ($variables.MSSQL_Port) {
+    $sqlInstallArgs += "/TCPport=" + $variables.MSSQL_Port
+}
+
+# Instalacja MSSQL
+Write-Host "Rozpoczęcie instalacji MSSQL..."
+Start-Process -FilePath $variables.MSSQL_Path -ArgumentList $sqlInstallArgs -Wait
+Write-Host "Instalacja MSSQL zakończona."
+
+# Instalacja Java Azul
+Write-Host "Rozpoczęcie instalacji Java Azul..."
+Start-Process -FilePath $variables.Java_Path -ArgumentList '/s' -Wait
+Write-Host "Instalacja Java Azul zakończona."
+
+# Instalacja Tomcat
+Write-Host "Rozpoczęcie instalacji Tomcat..."
+Start-Process -FilePath $variables.Tomcat_Path -ArgumentList '/S' -Wait
+Write-Host "Instalacja Tomcat zakończona."
